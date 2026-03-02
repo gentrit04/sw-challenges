@@ -15,17 +15,17 @@
 }
 
 @theme inline {
-  --bg: var(--bg-primary);
-  --bg-secondary: var(--bg-secondary);
-  --bg-modal: var(--bg-modal);
+  --color-bg: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-modal: var(--bg-modal);
 
-  --text: var(--text-primary);
-  --text-secondary: var(--text-secondary);
+  --color-text: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
 
-  --accent: var(--accent);
-  --accent-hover: var(--accent-hover);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
 
-  --border: var(--border);
+  --color-border: var(--border);
 }
 
 body {
