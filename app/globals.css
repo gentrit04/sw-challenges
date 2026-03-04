@@ -1,9 +1,8 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 :root {
   --bg-primary: #121212;
-  --bg-secondary: #1e1e2f;
-  --bg-modal: #2a2a3c;
+  --bg-secondary: #1a1a1a;
 
   --text-primary: #e0e0e0;
   --text-secondary: #a0a0a0;
@@ -17,7 +16,6 @@
 @theme inline {
   --color-bg: var(--bg-primary);
   --color-bg-secondary: var(--bg-secondary);
-  --color-bg-modal: var(--bg-modal);
 
   --color-text: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
@@ -26,6 +24,9 @@
   --color-accent-hover: var(--accent-hover);
 
   --color-border: var(--border);
+
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
 }
 
 body {
