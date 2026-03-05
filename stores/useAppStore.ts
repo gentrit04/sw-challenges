@@ -9,6 +9,7 @@ interface AppStore {
   battles: BattleEvent[];
 
   addChallenge: (challenge: Challenge) => void;
+  updateChallenge: (id: string, updated: Challenge) => void;
   deleteChallenge: (id: string) => void;
 
   addPlayer: (player: Player) => void;
@@ -34,6 +35,11 @@ export const useAppStore = create<AppStore>()(
           challenges: [...state.challenges, challenge],
         })),
 
+      updateChallenge: (id, updated) =>
+        set((state) => ({
+          challenges: state.challenges.map((c) => (c.id === id ? updated : c)),
+        })),
+
       deleteChallenge: (id) =>
         set((state) => ({
           challenges: state.challenges.filter((c) => c.id !== id),
@@ -47,6 +53,7 @@ export const useAppStore = create<AppStore>()(
       deletePlayer: (id) =>
         set((state) => ({
           players: state.players.filter((p) => p.id !== id),
+          battles: state.battles.filter((b) => b.playerId !== id),
         })),
 
       recordBattle: (battle) =>
