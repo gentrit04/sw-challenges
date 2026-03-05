@@ -106,7 +106,10 @@ export default function BattlePage() {
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {selectedTier.monsters.map((monster) => {
                   const filteredWinsBattles = battles.some(
-                    (b) => b.monsterId === monster.id && b.outcome === "win",
+                    (b) =>
+                      b.monsterId === monster.id &&
+                      player.id === b.playerId &&
+                      b.outcome === "win",
                   );
                   const isSelected = selectedMonsterIds.includes(monster.id);
 
