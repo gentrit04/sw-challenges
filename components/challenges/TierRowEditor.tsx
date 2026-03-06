@@ -73,7 +73,7 @@ export default function TierRowEditor({
               <MonsterCard monster={monster} />
               <button
                 onClick={() => handleRemoveMonster(monster.id)}
-                className="bg-danger absolute -top-1 -right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full text-xs text-white opacity-0 transition-opacity group-hover:opacity-100"
+                className="bg-danger absolute -top-1 -right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full text-xs text-white opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100"
               >
                 x
               </button>

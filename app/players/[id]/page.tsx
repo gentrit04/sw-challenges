@@ -49,7 +49,7 @@ export default function PlayerDetailPage() {
 
   return (
     <div className="mx-auto max-w-3xl p-4 sm:p-6">
-      <div className="mb-6 flex items-start justify-between gap-4">
+      <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row">
         <div>
           <h1 className="text-text text-2xl font-bold">{player.name}</h1>
           {challenge && (

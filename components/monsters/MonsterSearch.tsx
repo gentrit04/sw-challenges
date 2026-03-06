@@ -35,7 +35,7 @@ export default function MonsterSearch({
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <input
           type="text"
           placeholder="Search monster name..."

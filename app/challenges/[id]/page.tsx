@@ -41,9 +41,11 @@ export default function ChallengeDetailPage() {
 
   return (
     <div className="mx-auto max-w-3xl p-4 sm:p-6">
-      <div className="mb-6 flex items-start justify-between gap-4">
+      <div className="mb-6 flex flex-col items-center justify-between gap-4 sm:flex-row">
         <div>
-          <h1 className="text-text text-2xl font-bold">{challenge.name}</h1>
+          <h1 className="text-text text-center text-2xl font-bold sm:text-left">
+            {challenge.name}
+          </h1>
           <div className="text-text-secondary mt-1 flex gap-3 text-sm">
             {challenge.createdBy && <span>by {challenge.createdBy}</span>}
             <span>{formatDate(challenge.createdAt)}</span>
@@ -118,19 +120,7 @@ export default function ChallengeDetailPage() {
             {tier.monsters.length > 0 ? (
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                 {tier.monsters.map((monster) => (
-                  <div
-                    key={monster.id}
-                    onClick={() => {
-                      navigator.clipboard.writeText(
-                        `${monster.name} (${monster.element})`,
-                      );
-                      alert(`Copied: ${monster.name} (${monster.element})`);
-                    }}
-                    className="cursor-pointer transition-transform hover:scale-[1.02]"
-                    title="Click to copy name"
-                  >
-                    <MonsterCard monster={monster} />
-                  </div>
+                  <MonsterCard key={monster.id} monster={monster} />
                 ))}
               </div>
             ) : (

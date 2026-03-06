@@ -50,7 +50,7 @@ export default function Home() {
             localStorage.clear();
             location.reload();
           }}
-          className="bg-accent text-bg hover:bg-accent-hover absolute top-2 right-2 cursor-pointer rounded-lg px-2 py-1 text-sm font-medium transition-colors sm:px-4 sm:py-2"
+          className="bg-accent text-bg hover:bg-accent-hover absolute top-2 right-2 cursor-pointer rounded-lg px-2 py-1 text-xs font-medium transition-colors sm:px-4 sm:py-2 sm:text-sm"
         >
           Reset Data
         </button>
