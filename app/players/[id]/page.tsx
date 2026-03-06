@@ -71,6 +71,12 @@ export default function PlayerDetailPage() {
           >
             Battle
           </Link>
+          <Link
+            href={`/players/${playerId}/list/?challengeId=${challenge?.id}`}
+            className="bg-bg-secondary text-primary hover:bg-bg-secondary/70 rounded-lg px-3 py-1.5 text-sm font-medium"
+          >
+            List
+          </Link>
           <button
             onClick={handleDelete}
             className="bg-danger/15 text-danger hover:bg-danger/25 cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors"
