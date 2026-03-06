@@ -8,12 +8,12 @@ import { Skull } from "lucide-react";
 
 interface MonsterCardProps {
   monster: Monster;
-  isPlayerList: boolean;
+  isPlayerList?: boolean;
 }
 
 export default function MonsterCard({
   monster,
-  isPlayerList,
+  isPlayerList = false,
 }: MonsterCardProps) {
   console.log(isPlayerList);
   return (
