@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { TierRow, Monster } from "@/types";
 import MonsterCard from "@/components/monsters/MonsterCard";
+
 import MonsterSearch from "@/components/monsters/MonsterSearch";
+import { generateId } from "@/utils/helpers";
+import MonsterGroupCard from "../monsters/MonsterGroupCard";
 
 interface TierRowEditorProps {
   tier: TierRow;
@@ -19,18 +22,53 @@ export default function TierRowEditor({
   onRemove,
 }: TierRowEditorProps) {
   const [showSearch, setShowSearch] = useState(false);
+  const [isGroupMode, setIsGroupMode] = useState(false);
+  const [pendingGroupMonsters, setPendingGroupMonsters] = useState<Monster[]>(
+    [],
+  );
 
   const handleAddMonster = (monster: Monster) => {
-    if (tier.monsters.some((m) => m.id === monster.id)) return;
+    const isAlreadyInTier = tier.groups.some((group) =>
+      group.monsters.some((m) => m.id === monster.id),
+    );
+    if (isAlreadyInTier) return;
 
-    onUpdate({ ...tier, monsters: [...tier.monsters, monster] });
+    if (isGroupMode) {
+      if (pendingGroupMonsters.some((m) => m.id === monster.id)) return;
+      if (pendingGroupMonsters.length >= 4) return;
+      setPendingGroupMonsters([...pendingGroupMonsters, monster]);
+    } else {
+      onUpdate({
+        ...tier,
+        groups: [...tier.groups, { id: generateId(), monsters: [monster] }],
+      });
+    }
   };
 
-  const handleRemoveMonster = (monsterId: number) => {
+  const handleConfirmGroup = () => {
+    if (pendingGroupMonsters.length === 0) return;
     onUpdate({
       ...tier,
-      monsters: tier.monsters.filter((m) => m.id !== monsterId),
+      groups: [
+        ...tier.groups,
+        { id: generateId(), monsters: pendingGroupMonsters },
+      ],
     });
+    setPendingGroupMonsters([]);
+    setShowSearch(false);
+  };
+
+  const handleRemoveGroup = (groupId: string) => {
+    onUpdate({
+      ...tier,
+      groups: tier.groups.filter((g) => g.id !== groupId),
+    });
+  };
+
+  const handleRemovePendingMonster = (monsterId: number) => {
+    setPendingGroupMonsters(
+      pendingGroupMonsters.filter((m) => m.id !== monsterId),
+    );
   };
 
   return (
@@ -66,13 +104,13 @@ export default function TierRowEditor({
         </button>
       </div>
 
-      {tier.monsters.length > 0 && (
+      {tier.groups?.length > 0 && (
         <div className="mb-3 flex flex-wrap gap-2">
-          {tier.monsters.map((monster) => (
-            <div key={monster.id} className="group relative">
-              <MonsterCard monster={monster} />
+          {tier.groups.map((group) => (
+            <div key={group.id} className="group relative">
+              <MonsterGroupCard group={group} />
               <button
-                onClick={() => handleRemoveMonster(monster.id)}
+                onClick={() => handleRemoveGroup(group.id)}
                 className="bg-danger absolute -top-1 -right-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full text-xs text-white opacity-100 transition-opacity md:opacity-0 md:group-hover:opacity-100"
               >
                 x
@@ -83,17 +121,64 @@ export default function TierRowEditor({
       )}
 
       {showSearch ? (
-        <div className="border-border bg-bg rounded-lg border p-3">
-          <div className="mb-2 flex items-center justify-between">
+        <div className="border-border bg-bg flex flex-col gap-3 rounded-lg border p-3">
+          <div className="flex items-center justify-between">
             <span className="text-text text-sm font-medium">Add Monster</span>
-            <button
-              onClick={() => setShowSearch(false)}
-              className="text-text-secondary hover:text-text cursor-pointer text-xs"
-            >
-              Close
-            </button>
+            <div className="flex items-center gap-3">
+              <label className="flex cursor-pointer touch-none items-center gap-2">
+                <span className="text-text-secondary text-xs">Group Mode</span>
+                <div
+                  className={`h-4 w-8 rounded-full p-0.5 transition-colors ${isGroupMode ? "bg-accent" : "bg-border"}`}
+                  onClick={() => setIsGroupMode(!isGroupMode)}
+                >
+                  <div
+                    className={`h-3 w-3 rounded-full bg-white transition-transform ${isGroupMode ? "translate-x-4" : "translate-x-0"}`}
+                  />
+                </div>
+              </label>
+              <button
+                onClick={() => {
+                  setShowSearch(false);
+                  setPendingGroupMonsters([]);
+                }}
+                className="text-text-secondary hover:text-text cursor-pointer text-xs"
+              >
+                Close
+              </button>
+            </div>
           </div>
-          <MonsterSearch monsters={monsters} onSelect={handleAddMonster} />
+
+          {isGroupMode && pendingGroupMonsters.length > 0 && (
+            <div className="border-border bg-bg-secondary flex flex-col gap-2 rounded-lg border p-2">
+              <div className="text-text-secondary text-xs font-medium">
+                Pending Group:
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {pendingGroupMonsters.map((monster) => (
+                  <div key={monster.id} className="group relative">
+                    <MonsterCard monster={monster} />
+                    <button
+                      onClick={() => handleRemovePendingMonster(monster.id)}
+                      className="bg-danger absolute -top-1 -right-1 flex h-4 w-4 cursor-pointer items-center justify-center rounded-full text-[10px] text-white"
+                    >
+                      x
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={handleConfirmGroup}
+                className="bg-accent text-bg hover:bg-accent-hover cursor-pointer self-end rounded px-3 py-1.5 text-xs font-medium transition-colors"
+              >
+                Confirm Group ({pendingGroupMonsters.length}/4)
+              </button>
+            </div>
+          )}
+          <MonsterSearch
+            monsters={monsters}
+            onSelect={handleAddMonster}
+            tier={tier}
+          />
         </div>
       ) : (
         <button

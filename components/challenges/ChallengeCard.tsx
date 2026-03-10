@@ -7,8 +7,8 @@ interface ChallengeCardProps {
 }
 
 export default function ChallengeCard({ challenge }: ChallengeCardProps) {
-  const totalMonsters = challenge.tiers.reduce(
-    (sum, tier) => sum + tier.monsters.length,
+  const totalEncounters = challenge.tiers.reduce(
+    (sum, tier) => sum + (tier.groups?.length || 0),
     0,
   );
 
@@ -33,7 +33,7 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
             {challenge.tiers.length} rows
           </span>
           <span className="text-text-secondary text-sm">
-            {totalMonsters} monsters
+            {totalEncounters} encounters
           </span>
         </div>
       </div>

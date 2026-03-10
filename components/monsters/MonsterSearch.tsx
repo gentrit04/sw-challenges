@@ -1,17 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Monster } from "@/types";
+import { Monster, TierRow } from "@/types";
 import MonsterCard from "./MonsterCard";
 
 interface MonsterSearchProps {
   monsters: Monster[];
   onSelect: (monster: Monster) => void;
+  tier: TierRow;
 }
 
 export default function MonsterSearch({
   monsters,
   onSelect,
+  tier,
 }: MonsterSearchProps) {
   const [search, setSearch] = useState("");
   const [elementFilter, setElementFilter] = useState("");
@@ -64,15 +66,23 @@ export default function MonsterSearch({
           </p>
         ) : (
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {filtered.slice(0, 6).map((monster) => (
-              <div
-                key={monster.id}
-                onClick={() => onSelect(monster)}
-                className="cursor-pointer"
-              >
-                <MonsterCard monster={monster} />
-              </div>
-            ))}
+            {filtered.slice(0, 6).map((monster) => {
+              const isAlreadyInTier = tier.groups.some((group) =>
+                group.monsters.some((m) => m.id === monster.id),
+              );
+              return (
+                <div
+                  key={monster.id}
+                  onClick={() => onSelect(monster)}
+                  className="cursor-pointer"
+                >
+                  <MonsterCard
+                    monster={monster}
+                    isAlreadyInTier={isAlreadyInTier}
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
       </div>

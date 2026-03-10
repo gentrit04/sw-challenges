@@ -46,7 +46,7 @@ export default function EditChallengePage() {
         id: generateId(),
         rowNumber: tiers.length + 1,
         rowMinute: 1,
-        monsters: [],
+        groups: [],
       },
     ]);
   };

@@ -5,12 +5,17 @@ export interface Monster {
   element: "fire" | "water" | "wind" | "light" | "dark";
 }
 
+export interface MonsterGroup {
+  id: string;
+  monsters: Monster[];
+}
+
 export interface TierRow {
   id: string;
   rowNumber: number;
   rowMinute: number;
   label?: string;
-  monsters: Monster[];
+  groups: MonsterGroup[];
 }
 
 export interface Challenge {
@@ -33,7 +38,7 @@ export interface BattleEvent {
   playerId: string;
   challengeId: string;
   tierRowId: string;
-  monsterId: number;
+  groupId: string;
   outcome: "win" | "loss";
   minutesAwarded: number;
   timestamp: number;

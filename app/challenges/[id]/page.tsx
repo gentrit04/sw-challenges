@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useAppStore } from "@/stores/useAppStore";
 import { formatDate, downloadJson } from "@/utils/helpers";
-import MonsterCard from "@/components/monsters/MonsterCard";
+import MonsterGroupCard from "@/components/monsters/MonsterGroupCard";
 
 export default function ChallengeDetailPage() {
   const router = useRouter();
@@ -113,19 +113,19 @@ export default function ChallengeDetailPage() {
                 {tier.rowMinute} min
               </span>
               <span className="text-text-secondary text-sm">
-                {tier.monsters.length} monsters
+                {tier.groups?.length || 0} groups
               </span>
             </div>
 
-            {tier.monsters.length > 0 ? (
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {tier.monsters.map((monster) => (
-                  <MonsterCard key={monster.id} monster={monster} />
+            {tier.groups?.length > 0 ? (
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {tier.groups.map((group) => (
+                  <MonsterGroupCard key={group.id} group={group} />
                 ))}
               </div>
             ) : (
               <p className="text-text-secondary py-2 text-sm">
-                No monsters in this row
+                No groups in this row
               </p>
             )}
           </div>
