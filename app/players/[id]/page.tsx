@@ -1,8 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useAppStore } from "@/stores/useAppStore";
+import MonsterGroupCard from "@/components/monsters/MonsterGroupCard";
+import BattleModal from "@/components/monsters/BattleModal";
+import { MonsterGroup, TierRow } from "@/types";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 export default function PlayerDetailPage() {
   const router = useRouter();
@@ -13,6 +18,12 @@ export default function PlayerDetailPage() {
   const challenges = useAppStore((s) => s.challenges);
   const battles = useAppStore((s) => s.battles);
   const deletePlayer = useAppStore((s) => s.deletePlayer);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<MonsterGroup | null>(null);
+  const [selectedTier, setSelectedTier] = useState<TierRow | null>(null);
+
+  const [hideBattleHistory, setHideBattleHistory] = useState(true);
 
   const player = players.find((p) => p.id === playerId);
   const challenge = challenges.find((c) => c.id === player?.assignedChallenge);
@@ -47,6 +58,12 @@ export default function PlayerDetailPage() {
     router.push("/players");
   };
 
+  const handleGroupClick = (group: MonsterGroup, tier: TierRow) => {
+    setSelectedGroup(group);
+    setSelectedTier(tier);
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="mx-auto max-w-3xl p-4 sm:p-6">
       <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row">
@@ -65,18 +82,6 @@ export default function PlayerDetailPage() {
           )}
         </div>
         <div className="flex gap-2">
-          <Link
-            href={`/players/${playerId}/battle`}
-            className="bg-accent text-bg hover:bg-accent-hover rounded-lg px-3 py-1.5 text-sm font-medium"
-          >
-            Battle
-          </Link>
-          <Link
-            href={`/players/${playerId}/list/?challengeId=${challenge?.id}`}
-            className="bg-bg-secondary text-primary hover:bg-bg-secondary/70 rounded-lg px-3 py-1.5 text-sm font-medium"
-          >
-            List
-          </Link>
           <button
             onClick={handleDelete}
             className="bg-danger/15 text-danger hover:bg-danger/25 cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-colors"
@@ -107,15 +112,73 @@ export default function PlayerDetailPage() {
         </div>
       </div>
 
+      {challenge && (
+        <div className="mb-6 flex flex-col gap-4">
+          <h2 className="text-text text-lg font-semibold">
+            Tier Rows ({challenge.tiers.length})
+          </h2>
+
+          {challenge.tiers.map((tier) => (
+            <div
+              key={tier.id}
+              className="border-border bg-bg-secondary rounded-xl border p-4"
+            >
+              <div className="mb-3 flex items-center gap-3">
+                <span className="text-text font-medium">
+                  {tier.label || `Row ${tier.rowNumber}`}
+                </span>
+                <span className="text-accent text-sm font-medium">
+                  {tier.rowMinute} min
+                </span>
+                <span className="text-text-secondary text-sm">
+                  {tier.groups?.length || 0} groups
+                </span>
+              </div>
+
+              {tier.groups?.length > 0 ? (
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {tier.groups.map((group) => {
+                    const filteredWinsBattles = battles.some(
+                      (b) =>
+                        b.groupId === group.id &&
+                        player.id === b.playerId &&
+                        b.outcome === "win",
+                    );
+
+                    return (
+                      <button
+                        key={group.id}
+                        onClick={() => handleGroupClick(group, tier)}
+                        disabled={filteredWinsBattles}
+                        className={`relative cursor-pointer text-left transition-transform hover:scale-105 ${
+                          filteredWinsBattles
+                            ? "cursor-not-allowed opacity-100 hover:scale-100"
+                            : ""
+                        }`}
+                      >
+                        <div className={filteredWinsBattles ? "grayscale" : ""}>
+                          <MonsterGroupCard group={group} />
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-text-secondary py-2 text-sm">
+                  No groups in this row
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       <div>
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-text text-lg font-semibold">Battle History</h2>
-          <Link
-            href={`/players/${playerId}/battle`}
-            className="text-accent text-sm hover:underline"
-          >
-            + Record Battle
-          </Link>
+          <button onClick={() => setHideBattleHistory(!hideBattleHistory)}>
+            {hideBattleHistory ? <ChevronUp /> : <ChevronDown />}
+          </button>
         </div>
 
         {playerBattles.length === 0 ? (
@@ -124,39 +187,52 @@ export default function PlayerDetailPage() {
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            {playerBattles.map((battle) => (
-              <div
-                key={battle.id}
-                className="border-border bg-bg-secondary flex items-center gap-3 rounded-lg border px-4 py-3"
-              >
-                <span
-                  className={`text-sm font-bold ${
-                    battle.outcome === "win" ? "text-success" : "text-danger"
-                  }`}
+            {!hideBattleHistory &&
+              playerBattles.map((battle) => (
+                <div
+                  key={battle.id}
+                  className="border-border bg-bg-secondary flex items-center gap-3 rounded-lg border px-4 py-3"
                 >
-                  {battle.outcome === "win" ? "W" : "L"}
-                </span>
-                <div className="flex-1">
-                  <p className="text-text text-sm">
-                    {challenge?.tiers
-                      .flatMap((t) => t.monsters)
-                      .find((m) => m.id === battle.monsterId)?.name ??
-                      `Monster #${battle.monsterId}`}
-                  </p>
+                  <span
+                    className={`text-sm font-bold ${
+                      battle.outcome === "win" ? "text-success" : "text-danger"
+                    }`}
+                  >
+                    {battle.outcome === "win" ? "W" : "L"}
+                  </span>
+                  <div className="flex-1">
+                    <p className="text-text text-sm">
+                      {challenge?.tiers
+                        .flatMap((t) => t.groups || [])
+                        .find((g) => g.id === battle.groupId)
+                        ?.monsters.map((m) => m.name)
+                        .join(", ") ?? `Encounter`}
+                    </p>
+                  </div>
+                  <span
+                    className={`text-sm font-medium ${
+                      battle.minutesAwarded > 0 ? "text-success" : "text-danger"
+                    }`}
+                  >
+                    {battle.minutesAwarded > 0 ? "+" : ""}
+                    {battle.minutesAwarded} min
+                  </span>
                 </div>
-                <span
-                  className={`text-sm font-medium ${
-                    battle.minutesAwarded > 0 ? "text-success" : "text-danger"
-                  }`}
-                >
-                  {battle.minutesAwarded > 0 ? "+" : ""}
-                  {battle.minutesAwarded} min
-                </span>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </div>
+
+      {challenge && (
+        <BattleModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          group={selectedGroup}
+          tier={selectedTier}
+          playerId={player.id}
+          challengeId={challenge.id}
+        />
+      )}
     </div>
   );
 }
