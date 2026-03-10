@@ -4,7 +4,7 @@ export const capitalizeFirstLetter = (string: string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
 
-export const downloadJson = (data: any, filename: string) => {
+export const downloadJson = (data: unknown, filename: string) => {
   const jsonString = JSON.stringify(data, null, 2);
   const blob = new Blob([jsonString], { type: "application/json" });
   const url = URL.createObjectURL(blob);
@@ -17,7 +17,7 @@ export const downloadJson = (data: any, filename: string) => {
   URL.revokeObjectURL(url);
 };
 
-export const readJsonFile = (file: File): Promise<any> => {
+export const readJsonFile = (file: File): Promise<unknown> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {

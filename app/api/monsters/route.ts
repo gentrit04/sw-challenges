@@ -15,7 +15,7 @@ export async function GET() {
     }
 
     return NextResponse.json(allMonsters);
-  } catch (err) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to fetch monsters" },
       { status: 500 },

@@ -23,7 +23,7 @@ export default function CreateChallengePage() {
     fetch("/api/monsters")
       .then((res) => res.json())
       .then((data) => setMonsters(data));
-  }, []);
+  }, [monsters.length, setMonsters]);
 
   const handleAddRow = () => {
     setTiers([
@@ -32,7 +32,7 @@ export default function CreateChallengePage() {
         id: generateId(),
         rowNumber: tiers.length + 1,
         rowMinute: 1,
-        monsters: [],
+        groups: [],
       },
     ]);
   };
