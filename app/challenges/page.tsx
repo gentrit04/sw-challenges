@@ -2,6 +2,7 @@
 
 import ChallengeCard from "@/components/challenges/ChallengeCard";
 import { useAppStore } from "@/stores/useAppStore";
+import { Challenge } from "@/types";
 import Link from "next/link";
 
 export default function ChallengesPage() {
@@ -26,7 +27,7 @@ export default function ChallengesPage() {
                   const data = await helpers.readJsonFile(file);
                   if (data && data.name && data.tiers) {
                     useAppStore.getState().addChallenge({
-                      ...data,
+                      ...(data as unknown as Challenge),
                       id: helpers.generateId(),
                     });
                   }
