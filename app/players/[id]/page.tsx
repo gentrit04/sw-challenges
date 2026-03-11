@@ -136,7 +136,7 @@ export default function PlayerDetailPage() {
               </div>
 
               {tier.groups?.length > 0 ? (
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
                   {tier.groups.map((group) => {
                     const filteredWinsBattles = battles.some(
                       (b) =>
@@ -177,18 +177,18 @@ export default function PlayerDetailPage() {
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-text text-lg font-semibold">Battle History</h2>
           <button onClick={() => setHideBattleHistory(!hideBattleHistory)}>
-            {hideBattleHistory ? <ChevronUp /> : <ChevronDown />}
+            {hideBattleHistory ? <ChevronDown /> : <ChevronUp />}
           </button>
         </div>
 
-        {playerBattles.length === 0 ? (
-          <div className="border-border flex flex-col items-center gap-2 rounded-xl border border-dashed py-10">
-            <p className="text-text-secondary">No battles recorded yet</p>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            {!hideBattleHistory &&
-              playerBattles.map((battle) => (
+        {!hideBattleHistory &&
+          (playerBattles.length === 0 ? (
+            <div className="border-border flex flex-col items-center gap-2 rounded-xl border border-dashed py-10">
+              <p className="text-text-secondary">No battles recorded yet</p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {playerBattles.map((battle) => (
                 <div
                   key={battle.id}
                   className="border-border bg-bg-secondary flex items-center gap-3 rounded-lg border px-4 py-3"
@@ -206,7 +206,7 @@ export default function PlayerDetailPage() {
                         .flatMap((t) => t.groups || [])
                         .find((g) => g.id === battle.groupId)
                         ?.monsters.map((m) => m.name)
-                        .join(", ") ?? `Encounter`}
+                        .join(", ") ?? `Unknown Group`}
                     </p>
                   </div>
                   <span
@@ -219,8 +219,8 @@ export default function PlayerDetailPage() {
                   </span>
                 </div>
               ))}
-          </div>
-        )}
+            </div>
+          ))}
       </div>
 
       {challenge && (
