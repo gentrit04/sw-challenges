@@ -118,58 +118,77 @@ export default function PlayerDetailPage() {
             Tier Rows ({challenge.tiers.length})
           </h2>
 
-          {challenge.tiers.map((tier) => (
-            <div
-              key={tier.id}
-              className="border-border bg-bg-secondary rounded-xl border p-4"
-            >
-              <div className="mb-3 flex items-center gap-3">
-                <span className="text-text font-medium">
-                  {tier.label || `Row ${tier.rowNumber}`}
-                </span>
-                <span className="text-accent text-sm font-medium">
-                  {tier.rowMinute} min
-                </span>
-                <span className="text-text-secondary text-sm">
-                  {tier.groups?.length || 0} groups
-                </span>
-              </div>
+          {challenge.tiers.map((tier) => {
+            const completedTier =
+              tier.groups?.length > 0 &&
+              tier.groups.every((g) =>
+                battles.some(
+                  (b) =>
+                    b.groupId === g.id &&
+                    b.playerId === player.id &&
+                    b.outcome === "win",
+                ),
+              );
 
-              {tier.groups?.length > 0 ? (
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
-                  {tier.groups.map((group) => {
-                    const filteredWinsBattles = battles.some(
-                      (b) =>
-                        b.groupId === group.id &&
-                        player.id === b.playerId &&
-                        b.outcome === "win",
-                    );
-
-                    return (
-                      <button
-                        key={group.id}
-                        onClick={() => handleGroupClick(group, tier)}
-                        disabled={filteredWinsBattles}
-                        className={`relative cursor-pointer text-left transition-transform hover:scale-105 ${
-                          filteredWinsBattles
-                            ? "cursor-not-allowed opacity-100 hover:scale-100"
-                            : ""
-                        }`}
-                      >
-                        <div className={filteredWinsBattles ? "grayscale" : ""}>
-                          <MonsterGroupCard group={group} />
-                        </div>
-                      </button>
-                    );
-                  })}
+            return (
+              <div
+                key={tier.id}
+                className={`rounded-xl border p-4 transition-colors ${
+                  completedTier
+                    ? "border-success/50 bg-success/5"
+                    : "border-border bg-bg-secondary"
+                }`}
+              >
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="text-text font-medium">
+                    {tier.label || `Row ${tier.rowNumber}`}
+                  </span>
+                  <span className="text-accent text-sm font-medium">
+                    {tier.rowMinute} min
+                  </span>
+                  <span className="text-text-secondary text-sm">
+                    {tier.groups?.length || 0} groups
+                  </span>
                 </div>
-              ) : (
-                <p className="text-text-secondary py-2 text-sm">
-                  No groups in this row
-                </p>
-              )}
-            </div>
-          ))}
+
+                {tier.groups?.length > 0 ? (
+                  <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+                    {tier.groups.map((group) => {
+                      const filteredWinsBattles = battles.some(
+                        (b) =>
+                          b.groupId === group.id &&
+                          player.id === b.playerId &&
+                          b.outcome === "win",
+                      );
+
+                      return (
+                        <button
+                          key={group.id}
+                          onClick={() => handleGroupClick(group, tier)}
+                          disabled={filteredWinsBattles}
+                          className={`relative cursor-pointer text-left transition-transform hover:scale-105 ${
+                            filteredWinsBattles
+                              ? "cursor-not-allowed opacity-100 hover:scale-100"
+                              : ""
+                          }`}
+                        >
+                          <div
+                            className={filteredWinsBattles ? "grayscale" : ""}
+                          >
+                            <MonsterGroupCard group={group} />
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-text-secondary py-2 text-sm">
+                    No groups in this row
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
