@@ -48,6 +48,10 @@ This project started because a friend wanted to give us a fun challenge by creat
 
 There are two ways to use this website. You can either let one person manage everything (battles, tierlist, players) for the group, or one person can create the tierlist, export it, and the players can import it and track their progress on their own.
 
+## Data Source
+
+Monster data and images are sourced from **[SWARFARM](https://swarfarm.com)** via their public API (`swarfarm.com/api/v2/monsters/`)
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
