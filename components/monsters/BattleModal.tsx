@@ -51,8 +51,11 @@ export default function BattleModal({
   const lossMinutes = tier.rowMinute * group.monsters.length * -0.5;
 
   return (
-    <div className="bg-bg/80 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div className="border-border bg-bg-secondary w-full max-w-sm rounded-xl border p-6 shadow-xl">
+    <div
+      className="bg-bg/80 fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div className="border-border bg-bg-secondary w-full max-w-sm rounded-xl border p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
         <div className="mb-4 flex items-start justify-between">
           <h2 className="text-text text-xl font-bold">Record Battle</h2>
 
